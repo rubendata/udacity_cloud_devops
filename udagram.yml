@@ -14,7 +14,7 @@ Resources:
     Type: 'AWS::S3::Bucket'
     Properties:
       BucketName: !Sub "${ProjectName}-${AWSAccount}-testbucket"
-      AccessControl: Private
+      AccessControl: PublicRead
       VersioningConfiguration:
         Status: Enabled
       BucketEncryption:
@@ -40,6 +40,10 @@ Resources:
         FromPort: 80
         ToPort: 80
         SourceSecurityGroupId: !Ref LBSecGroup
+      - IpProtocol: tcp
+        FromPort: 443
+        ToPort: 443
+        CidrIp: 0.0.0.0/0
    
 
   AutoScalingGroup:
