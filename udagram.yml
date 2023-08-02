@@ -14,7 +14,6 @@ Resources:
     Type: 'AWS::S3::Bucket'
     Properties:
       BucketName: !Sub "${ProjectName}-${AWSAccount}-testbucket"
-      AccessControl: PublicRead
       VersioningConfiguration:
         Status: Enabled
       BucketEncryption:
@@ -22,10 +21,20 @@ Resources:
           - ServerSideEncryptionByDefault:
               SSEAlgorithm: AES256
       PublicAccessBlockConfiguration:
-        BlockPublicAcls: true
-        IgnorePublicAcls: true
-        BlockPublicPolicy: true
-        RestrictPublicBuckets: true
+        BlockPublicPolicy: false
+        RestrictPublicBuckets: false
+
+  BucketPolicy:
+    Type: 'AWS::S3::BucketPolicy'
+    Properties:
+      Bucket: !Ref MyBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: '*'
+            Action: 's3:GetObject'
+            Resource: !Join ['', ['arn:aws:s3:::', !Ref MyBucket, '/*']]
   
 
   SecurityGroup:
@@ -172,6 +181,7 @@ Resources:
               - Effect: Allow
                 Action:
                   - 's3:GetObject*'
+                  - 's3:PutBucketPolicy'
                 Resource: !GetAtt MyBucket.Arn
 
 

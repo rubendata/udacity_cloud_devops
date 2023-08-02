@@ -1,11 +1,19 @@
 ### Project Title - Deploy a high-availability web app using CloudFormation
-This folder provides the starter code for the "ND9991 - C2- Infrastructure as Code - Deploy a high-availability web app using CloudFormation" project. This folder contains the following files:
+This project contains the code how to deploy a high available, fault tolerant, secure and scalable web application.
 
 
-#### final-project-starter.yml
-Students have to write the CloudFormation code using this YAML template for building the cloud infrastructure, as required for the project. 
+#### network.yml
+Contains the code for deploying the network with Cloudformation.
 
-#### server-parameters.json
-Students may use a JSON file for increasing the generic nature of the YAML code. For example, the JSON file contains a "ParameterKey" as "EnvironmentName" and "ParameterValue" as "UdacityProject". 
+#### network-parameters.json
+Contains parameters for the network vpc and subnet cidrs
 
-In YAML code, the `${EnvironmentName}` would be substituted with `UdacityProject` accordingly.
+#### udagram.yml
+Contains the code for deploying the web application
+
+#### udagram-params.json
+Contains parameters for s3
+
+#### How to access the application
+http://udagr-loadb-1l30c01p2a25o-1197508830.us-east-1.elb.amazonaws.com/
+it should return "Udacity Demo Web Server Up and Running!"
