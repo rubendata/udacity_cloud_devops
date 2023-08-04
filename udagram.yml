@@ -64,7 +64,7 @@ Resources:
     Properties:
       VPCZoneIdentifier:
       - Fn::ImportValue: 
-          !Sub "${ProjectName}-private-subnets" #change later
+          !Sub "${ProjectName}-public-subnets" #change later
       LaunchTemplate:
         LaunchTemplateId: !Ref LaunchTemplate
         Version: !GetAtt LaunchTemplate.LatestVersionNumber
