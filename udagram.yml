@@ -45,10 +45,6 @@ Resources:
           !Sub ${ProjectName}-vpc-id
       GroupDescription: !Ref ProjectName
       SecurityGroupIngress:
-      - IpProtocol: tcp #delete later
-        FromPort: 22
-        ToPort: 22
-        CidrIp: 0.0.0.0/0 
       - IpProtocol: tcp
         FromPort: 80
         ToPort: 80
@@ -64,7 +60,7 @@ Resources:
     Properties:
       VPCZoneIdentifier:
       - Fn::ImportValue: 
-          !Sub "${ProjectName}-public-subnets" #change later
+          !Sub "${ProjectName}-private-subnets"
       LaunchTemplate:
         LaunchTemplateId: !Ref LaunchTemplate
         Version: !GetAtt LaunchTemplate.LatestVersionNumber
@@ -99,10 +95,6 @@ Resources:
               VolumeSize: '10'
         IamInstanceProfile:
           Name: !Ref WebServerInstanceProfile
-        # NetworkInterfaces: #delete later
-        #   - AssociatePublicIpAddress: true
-        #     DeviceIndex: 0
-
 
   LBSecGroup:
     Type: AWS::EC2::SecurityGroup
