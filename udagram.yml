@@ -45,6 +45,10 @@ Resources:
           !Sub ${ProjectName}-vpc-id
       GroupDescription: !Ref ProjectName
       SecurityGroupIngress:
+      - IpProtocol: tcp #delete later
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 0.0.0.0/0 
       - IpProtocol: tcp
         FromPort: 80
         ToPort: 80
@@ -60,7 +64,7 @@ Resources:
     Properties:
       VPCZoneIdentifier:
       - Fn::ImportValue: 
-          !Sub "${ProjectName}-private-subnets"
+          !Sub "${ProjectName}-private-subnets" #change later
       LaunchTemplate:
         LaunchTemplateId: !Ref LaunchTemplate
         Version: !GetAtt LaunchTemplate.LatestVersionNumber
@@ -80,10 +84,12 @@ Resources:
             #!/bin/bash
             apt-get update -y
             apt-get install apache2 -y
+            apt-get install awscli -y 
             systemctl start apache2.service
-            cd /var/www/html
-            echo "Udacity Demo Web Server Up and Running!" > index.html
-        ImageId: ami-053b0d53c279acc90
+            sudo usermod -aG www-data ubuntu
+            sudo chown -R ubuntu:www-data /var/www/html/  # Change ownership
+            sudo -u ubuntu aws s3 cp s3://udagram-775442399522-testbucket/index.html /var/www/html/
+        ImageId: ami-024e6efaf93d85776 #  ImageId: ami-053b0d53c279acc90 for us-east-1
         SecurityGroupIds:
           - !Ref SecurityGroup
         InstanceType: t2.micro
@@ -93,6 +99,9 @@ Resources:
               VolumeSize: '10'
         IamInstanceProfile:
           Name: !Ref WebServerInstanceProfile
+        # NetworkInterfaces: #delete later
+        #   - AssociatePublicIpAddress: true
+        #     DeviceIndex: 0
 
 
   LBSecGroup:
@@ -202,19 +211,3 @@ Outputs:
         - ""
         - - "http://"
           - !GetAtt LoadBalancer.DNSName
-
-
-
-# Sample UserData
-# When creating your Launch Configuration, you may need a UserData script
-# here's one that you can use for Ubuntu Linux that will:
-# Install Apache Web Server, Start it, and create an index.html that will be displayed
-# when you visit the IP address of this server with your web browser
-#Here it is:
-#
-#          #!/bin/bash
-#          apt-get update -y
-#          apt-get install apache2 -y
-#          systemctl start apache2.service
-#          cd /var/www/html
-#          echo "Udacity Demo Web Server Up and Running!" > index.html
