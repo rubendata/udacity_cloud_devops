@@ -1,0 +1,70 @@
+# Parameters:
+
+#     ProjectName:
+#         Description: An environment name that will be prefixed to resource names
+#         Type: String
+
+
+# Resources:
+
+#   TestBucket:
+#     Type: 'AWS::S3::Bucket'
+#     Properties:
+#       BucketName: !Sub "udacity-devops-ruben-testbucket3"
+#       VersioningConfiguration:
+#         Status: Enabled
+#       BucketEncryption:
+#         ServerSideEncryptionConfiguration:
+#           - ServerSideEncryptionByDefault:
+#               SSEAlgorithm: AES256
+#       PublicAccessBlockConfiguration:
+#         BlockPublicPolicy: false
+#         RestrictPublicBuckets: false
+
+#   CreateIndexObjectFunction:
+#     Type: 'AWS::Lambda::Function'
+#     Properties:
+#       Handler: index.handler
+#       Role: !GetAtt CreateIndexObjectRole.Arn
+#       Runtime: python3.8 
+#       Timeout: 60
+#       Code:
+#         ZipFile: |
+#           import boto3
+
+#           def handler(event, context):
+#               s3 = boto3.client('s3')
+#               bucket_name = 'udacity-devops-ruben-testbucket3'
+#               s3.put_object(
+#                   Bucket=bucket_name,
+#                   Key='index.html',
+#                   Body='<!DOCTYPE html><html><head><title>Hello World!</title></head><body>Udacity Demo Web Server Up and Running!</body></html>',
+#                   ContentType='text/html'
+#               )
+
+#   CreateIndexObjectRole:
+#     Type: 'AWS::IAM::Role'
+#     Properties:
+#       AssumeRolePolicyDocument:
+#         Version: '2012-10-17'
+#         Statement:
+#           - Effect: Allow
+#             Principal:
+#               Service: lambda.amazonaws.com
+#             Action: 'sts:AssumeRole'
+#       Policies:
+#         - PolicyName: S3PutObjectPolicy
+#           PolicyDocument:
+#             Version: '2012-10-17'
+#             Statement:
+#               - Effect: Allow
+#                 Action: 's3:PutObject'
+#                 Resource: !Sub 'arn:aws:s3:::udacity-devops-ruben-testbucket3/*'
+
+#   IndexObjectCustomResource:
+#     Type: 'Custom::CreateIndexObject'
+#     Properties:
+#       ServiceToken: !GetAtt CreateIndexObjectFunction.Arn
+
+
+
