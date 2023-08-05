@@ -1,9 +1,11 @@
-FROM python:3.10-slim
+FROM python:3.10-slim-buster
 
-ARG STAGE
+WORKDIR /src
 
-RUN echo "import os" > /say_hello.py
-RUN echo "print('Stage: $STAGE')" >> /say_hello.py
-RUN echo "print(os.getenv('ACCOUNT'))" >> /say_hello.py
+COPY ./app/requirements.txt requirements.txt
 
-ENTRYPOINT python /say_hello.py
+RUN pip install -r requirements.txt
+
+COPY ./app .
+
+CMD python app.py
